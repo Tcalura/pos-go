@@ -1,0 +1,13 @@
+Anotaçoes pós GO 
+
+
+comandos uteis 
+
+// gera um modulo chamado meu-modulo
+$ go mod init meu-modulo
+
+// cria o binario do go com o nome do modulo do projeto
+// usa como referencia as variaveis de ambiente
+// GOOS e GOARCH para gerar o binario para 
+// o sistema que e arquitura que estao setados nessas variaveis
+$ go build 
