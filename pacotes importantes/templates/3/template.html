@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pos go</title>
+</head>
+<body>
+  <table border="1">
+    <tr>
+      <th>Nome</th>
+      <th>Horas</th>
+    </tr>
+    {{range .}}
+      {{ if eq .CargaHoraria 40 }}
+        <tr>
+          <td>{{.Nome}}</td>
+          <td>{{.CargaHoraria}}</td>
+        </tr>
+      {{ end }}
+    {{end}}
+</body>
+</html>
