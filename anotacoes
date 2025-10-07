@@ -11,3 +11,25 @@ $ go mod init meu-modulo
 // GOOS e GOARCH para gerar o binario para 
 // o sistema que e arquitura que estao setados nessas variaveis
 $ go build 
+
+```sql
+
+create table products (id varchar(255), name varchar(80), price decimal (10,2), primary key (id));
+
+
+```
+
+```go
+  // config para set do DB
+	cfg := mysql.NewConfig()
+	cfg.User = "root"
+	cfg.Passwd = "root"
+	cfg.Net = "tcp"
+	cfg.Addr = "127.0.0.1:3307"
+	cfg.DBName = "goexpert"
+
+	// Get a database handle.
+	// var err error
+	db, err := sql.Open("mysql", cfg.FormatDSN())
+
+```
