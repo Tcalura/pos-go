@@ -91,7 +91,8 @@ func TestUpdateProduct(t *testing.T) {
 
 	product, err = productDB.FindByID(string(product.ID))
 	assert.NoError(t, err)
-	assert.Equal(t, "Product 2", product.Name)}
+	assert.Equal(t, "Product 2", product.Name)
+}
 
 func TestDeleteProduct(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
