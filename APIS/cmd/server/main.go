@@ -1,13 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"mod-apis/configs"
-	"mod-apis/internal/dto"
 	"mod-apis/internal/entity"
 	"mod-apis/internal/infra/database"
+	"mod-apis/internal/infra/webserver/handlers"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -25,38 +24,10 @@ func main() {
 	}
 	_ = db.AutoMigrate(&entity.Product{}, &entity.User{})
 
-	http.ListenAndServe(":8080", nil)
-}
+	productDB := database.NewProduct(db)
+	productHandler := handlers.NewProductHandler(productDB)
 
-type ProductHandler struct {
-	ProductDB database.ProductInterface
-}
+	http.HandleFunc("/products", productHandler.CreateProduct)
 
-func NewProductHandler(db database.ProductInterface) *ProductHandler {
-	return &ProductHandler{
-		ProductDB: db,
-	}
-}
-
-func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	var product dto.CreateProductInput
-	err := json.NewDecoder(r.Body).Decode(&product)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	p, err := entity.NewProduct(product.Name, product.Price)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	err = h.ProductDB.Create(p)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
+	http.ListenAndServe(":8000", nil)
 }
