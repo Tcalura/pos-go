@@ -21,9 +21,9 @@ func TestCreateNewProduct(t *testing.T) {
 	product, err := entity.NewProduct("Product", 100)
 	assert.NoError(t, err)
 	productDB := NewProduct(db)
-	err = productDB.Create(product)
+	p, err := productDB.Create(product)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, product.ID)
+	assert.NotEmpty(t, p.ID)
 }
 
 func TestFindAllProducts(t *testing.T) {

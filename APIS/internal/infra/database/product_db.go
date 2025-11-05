@@ -14,8 +14,9 @@ func NewProduct(db *gorm.DB) *Product {
 	return &Product{DB: db}
 }
 
-func (p *Product) Create(product *entity.Product) error {
-	return p.DB.Create(product).Error
+func (p *Product) Create(product *entity.Product) (*entity.Product, error) {
+	result := p.DB.Create(product)
+	return product, result.Error
 }
 
 func (p *Product) FindAll(page, limit int, sort string) ([]*entity.Product, error) {
