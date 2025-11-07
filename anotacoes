@@ -99,3 +99,8 @@ Ao finalizar, envie o link do repositório para correção.
 	testes de mutaçao
 	go test -fuzz=. -fuzztime=5s
 	-fuzztime=5s tempo de execuçao desse tipo de teste
+================================================================================================================================
+
+fluxo de um Middleware 
+
+Request -> Middleware(usa os dados, faz alguma coisa. Continua)|outro Middleware|outro Middleware -> Handler -> Response
