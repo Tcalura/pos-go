@@ -45,5 +45,7 @@ func main() {
 	// r.PUT("/users/{id}", userHandler.UpdateUser)
 	// r.DELETE("/users/{id}", userHandler.DeleteUser)
 
+	r.Post("/user/generate_token", userHandler.GetJWT)
+
 	http.ListenAndServe(":8000", r)
 }
