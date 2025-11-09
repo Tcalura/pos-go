@@ -109,3 +109,20 @@ Request -> Middleware(usa os dados, faz alguma coisa. Continua)|outro Middleware
 
 bibliotecas para consultar 
 	* https://github.com/swaggo/swag <!-- Swag converts Go annotations to Swagger Documentation -->
+
+
+users/generate_token
+{
+  "email": "string@test.com",
+  "password": "123456"
+}
+		
+Response body
+Download
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjI3MjQyMDR9.UHO6Toj_LvGaBYGAyjzPlv_enM6IQLtBXF16jiDMBKo"
+}
+
+Bearer 
+
+product id 2eca545f-fe74-4c6b-b029-06a9e959fcf5
