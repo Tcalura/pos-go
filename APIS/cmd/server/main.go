@@ -72,7 +72,7 @@ func main() {
 	})
 
 	r.Post("/users", userHandler.CreateUser)
-	r.Post("/user/generate_token", userHandler.GetJWT)
+	r.Post("/users/generate_token", userHandler.GetJWT)
 
 	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 
