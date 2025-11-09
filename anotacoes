@@ -104,3 +104,8 @@ Ao finalizar, envie o link do repositório para correção.
 fluxo de um Middleware 
 
 Request -> Middleware(usa os dados, faz alguma coisa. Continua)|outro Middleware|outro Middleware -> Handler -> Response
+
+================================================================================================================================
+
+bibliotecas para consultar 
+	* https://github.com/swaggo/swag <!-- Swag converts Go annotations to Swagger Documentation -->
