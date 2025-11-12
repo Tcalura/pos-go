@@ -1,23 +1,26 @@
 POST http://localhost:8000/products
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 Content-Type: application/json
 
 {
-    "name": "My jjjjjj product",
+    "name": "My product",
     "price": 100
 }
 
 ###
 
 GET http://localhost:8000/products HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjI1NDIxMzl9.t4jC1Mhzc1Rg2j7OFmMlVEGhv3q4QEzIL0OJIAu1B64
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 Content-Type: application/json
 
 ###
-GET http://localhost:8000/products/ccccf8c0-cb37-47c0-9d6d-666298a0ca46 HTTP/1.1
+GET http://localhost:8000/products/616b3ecd-649a-47a0-a2bd-e6ce9bfc184c HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 Content-Type: application/json
 
 ###
-PUT http://localhost:8000/products/a3df729a-50f3-41e9-bd9d-844b5fcf8bb9 HTTP/1.1
+PUT http://localhost:8000/products/616b3ecd-649a-47a0-a2bd-e6ce9bfc184c HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 Content-Type: application/json
 
 {
@@ -27,5 +30,6 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:8000/products/a3df729a-50f3-41e9-bd9d-844b5fcf8bb9 HTTP/1.1
+DELETE http://localhost:8000/products/616b3ecd-649a-47a0-a2bd-e6ce9bfc184c HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 Content-Type: application/json

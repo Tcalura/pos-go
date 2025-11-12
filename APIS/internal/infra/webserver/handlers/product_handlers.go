@@ -10,7 +10,7 @@ import (
 	"mod-apis/internal/infra/database"
 	entityPkg "mod-apis/pkg/entity"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 type ProductHandler struct {

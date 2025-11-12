@@ -37,10 +37,10 @@ func NewProduct(name string, price float64) (*Product, error) {
 }
 
 func (p *Product) Validate() error {
-	if string(p.ID) == "" {
+	if p.ID.String() == "" {
 		return ErrIDIsRequired
 	}
-	if _, err := entity.ParseID(string(p.ID)); err != nil {
+	if _, err := entity.ParseID(p.ID.String()); err != nil {
 		return ErrInvalidID
 	}
 	if p.Name == "" {
