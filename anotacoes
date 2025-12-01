@@ -11,6 +11,12 @@ $ go mod init meu-modulo
 // o sistema que e arquitura que estao setados nessas variaveis
 $ go build 
 
+<!-- ferramenta para mind map, wireframe etc -->
+https://whimsical.com/boards
+https://excalidraw.com/
+
+<!--  -->
+
 ```sql
 create table products (id varchar(255), name varchar(80), price decimal (10,2), primary key (id));
 ```
@@ -43,7 +49,6 @@ aula 3 do packaging
  comando 
  go mod edit --replace <module_name>=../<endereco_relativo_na_maquina>
 
-==============================================================================================================================
 ======================================================= 1* Desafio ===========================================================
 
 Olá dev, tudo bem?
@@ -73,7 +78,6 @@ O endpoint necessário gerado pelo server.go para este desafio será: /cotacao e
  
 Ao finalizar, envie o link do repositório para correção.
 
-======================================================= 1* Desafio ===========================================================
 ==============================================================================================================================
 
 
@@ -110,19 +114,61 @@ Request -> Middleware(usa os dados, faz alguma coisa. Continua)|outro Middleware
 bibliotecas para consultar 
 	* https://github.com/swaggo/swag <!-- Swag converts Go annotations to Swagger Documentation -->
 
+============================================ Multithreading ========================================================
 
-users/generate_token
-{
-  "email": "string@test.com",
-  "password": "123456"
-}
-		
-Response body
-Download
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjI3MjQyMDR9.UHO6Toj_LvGaBYGAyjzPlv_enM6IQLtBXF16jiDMBKo"
-}
+compartilhamento de recurso entre threads 
+	mais de uma thread usa a mesma variavel em memoria. 
+		-> isso acarreta em race condition 
+	
+	mutex
+		-> Mutual exclusion
+		method lock 
+			-> trava a variavel para nao ser alterada por outra thread 
+		method Unlock
+			-> libera a variavel para ser alterada por outra thread
 
-Bearer 
+	Diferenças entre Concorrencia e Paralelismo
+	
+	concorrencia e paralelismo
+![alt text](conc_parale.png)
 
-product id 2eca545f-fe74-4c6b-b029-06a9e959fcf5
+	multi core
+	cada core é concorrente com suas threads 
+	os processos nos outros cores acaba sendo paralelo
+	setar mais de um core em go 'ativa' o paralelismo
+![alt text](multi_core.png)
+
+	multithreading
+	1. cada chamada gera um custo
+	1.1 O Syscall para o SO disponibilizar a thread 
+	1.2 A thread gerada aloca um espaço inicial de 1mb na ram que tbm gera custo
+	1.3 Mudancas de contextos entre cada thread dentro do mesmo processo tambem geram custo.  
+![alt text](image.png)
+
+	Schedulers
+
+	* Schedulers resolvem o problema de custo por alocação de recurso para os processos. 
+	Dois tipos de schedulers 
+	1. Preemptivo
+		Determina um tempo por cada tarefa
+		pros/contras
+		+ as tarefas tendem a finalizar mesmo que o scheduler tire ela de excuçao para outra assumir. 
+		- maior tempo de interrupçao entre parar uma tarefa e outra assumir
+	2. Cooperativo
+		Espera uma tarefa terminar para começar outra.
+		pros/contras
+		+ menor tempo e interrupção
+			a proxima só assume quando a anterior finalizar.  
+		- maior temppo de execuçao se cada tarefa levar um tempo consideravel, o tempo final para as conclusoes das tarefas tbm é maior.
+
+	Threads e Schedulers em GO 
+	Go tem seu proprio scheduler (ele nao utiliza em primeira via uma chamada para o scheduler do SO)
+	Chamado de 'Gerenciamento de Threads' / 'Green Threads' / 'Threads in Userland' / 'light threads' 
+	Scheduler do GO trabalha de forma Cooperativa para evitar mudança frequente de contexto.
+	OBS: o Go identifica quando uma tarefa vai executar sem tempo determinado (como em um loop infinito) ele automaticamente muda para um modelo de scheduler Preemptivo para nao impedir o processamento de outras tarefas. 
+	Por default o scheduler do runtime do Go aloca 2Kb de ram por thread.
+
+
+	Threads no GO 
+	O func main ja é uma thread de execuçao no GO 
+	outro exemplo é o GarbageCollector que tem uma thread exclusiva para ele.
