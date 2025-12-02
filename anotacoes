@@ -172,3 +172,17 @@ compartilhamento de recurso entre threads
 	Threads no GO 
 	O func main ja é uma thread de execuçao no GO 
 	outro exemplo é o GarbageCollector que tem uma thread exclusiva para ele.
+
+	Wait Groups
+	* Adiciona quantidade de tarefas/operaçoes
+	* Informar que foi finalizada uma operaçao
+	* Esperar até que as operações sejam finalizadas.
+
+	Go command 
+	<!-- adiciona um inspect na execuçao do projeto e retorna se existe algum bloco ou variavel sofrendo race condition  -->
+	go run -race main.go 
+
+	Operaçao atomica 
+	Operaçoes atomicas normalmente ja resolvem casos de race conditions em variaveis. 
+	pacote sync/atomic ja faz parte dos pacotes defaults do Go. 
+	por de baixo dos panos ele faz um lock e unlock da variavel passada no parametro
