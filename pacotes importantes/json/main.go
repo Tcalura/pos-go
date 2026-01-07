@@ -18,11 +18,14 @@ func main() {
 	}
 	println(string(res))
 
+  // processo de encoder ja faz o marshal mas sua funçao é
+  // retornar serializado para enviar para algo
 	err = json.NewEncoder(os.Stdout).Encode(conta)
 	if err != nil {
 		println(err)
 	}
 
+  // converter de json para struct
 	jsonPuro := []byte(`{"n":2,"s":200}`)
 	var contaX Conta
 	err = json.Unmarshal(jsonPuro, &contaX)
