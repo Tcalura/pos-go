@@ -2,68 +2,49 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 type ExchangeRate struct {
-	ID          int64     `json:"-" db:"id"`
-	Value       float64   `json:"bid" db:"value"`
-	Create_date time.Time `json:"create_date" db:"verification_date"`
+	gorm.Model
+	ID          int64     `json:"-" gorm:"id, primaryKey"`
+	Value       float64   `json:"bid" gorm:"value"`
+	Create_date time.Time `json:"create_date" gorm:"verification_date"`
 }
 
 func main() {
-	db, err := ConfigDB()
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
 	http.HandleFunc("/cotacao", HandlerExchangeRate)
 	http.ListenAndServe(":8080", nil)
 }
 
-func ConfigDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "./database.db")
-	if err != nil {
-		return nil, err
-	}
-
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
-
-	createTableSQL := `CREATE TABLE IF NOT EXISTS cotacoes (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		value REAL NOT NULL,
-		verification_date DATETIME NOT NULL
-	); `
-
-	_, err = db.Exec(createTableSQL)
-	if err != nil {
-		return nil, err
-	}
-
-	fmt.Println("DB created!")
-	return db, nil
-}
-
 func HandlerExchangeRate(w http.ResponseWriter, r *http.Request) {
-
 	// buscaCotacao
 	exRate, err := GetExchangeRate()
-  
+	if err != nil {
+		log.Println(err)
+	}
 	// SalvaCotacao
-
+	err = saveExchangeRate(exRate)
+	if err != nil {
+		log.Println(err)
+	}
 	// retorna json
+	w.Header().Set("Content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(exRate)
 
 }
 
+// ta funcionando
 func GetExchangeRate() (*ExchangeRate, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 	defer cancel()
@@ -77,6 +58,10 @@ func GetExchangeRate() (*ExchangeRate, error) {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
+	}
+
+	if ctx.Err() == context.DeadlineExceeded {
+		log.Println("Timeout ao buscar cotação: limite de 200ms excedido")
 	}
 	defer resp.Body.Close()
 
@@ -93,8 +78,9 @@ func GetExchangeRate() (*ExchangeRate, error) {
 	return &exRate, nil
 }
 
+// ta funcionando
 func (q *ExchangeRate) UnmarshalJSON(data []byte) error {
-  // temp struct
+	// temp struct
 	var raw struct {
 		USDBRL struct {
 			Bid        string `json:"bid"`
@@ -119,5 +105,28 @@ func (q *ExchangeRate) UnmarshalJSON(data []byte) error {
 	q.Value = bid
 	q.Create_date = createDate
 
+	return nil
+}
+// problema ao salvar no banco .create retorna algum erro que nao estou conseguindo ler
+func saveExchangeRate(exchangeRate *ExchangeRate) error {
+	db, err := gorm.Open(sqlite.Open("./database.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	db.AutoMigrate(&ExchangeRate{})
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+
+	execpt := db.WithContext(ctx).Create(&ExchangeRate{Value: exchangeRate.Value, Create_date: exchangeRate.Create_date})
+	if execpt != nil {
+    log.Println("Problema ao salvar no banco de dados")
+		log.Fatal(execpt.Error)
+	}
+
+	if ctx.Err() == context.DeadlineExceeded {
+		log.Println("Timeout ao salvar cotação: limite de 10ms excedido")
+		return ctx.Err()
+	}
 	return nil
 }
