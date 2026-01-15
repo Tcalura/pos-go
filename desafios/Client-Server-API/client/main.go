@@ -12,8 +12,7 @@ import (
 )
 
 type ExchangeRate struct {
-	Value       float64   `json:"value"`
-	Create_date time.Time `json:"create_date"`
+	Value float64 `json:"bid"`
 }
 
 func main() {
@@ -36,6 +35,7 @@ func main() {
 	if ctx.Err() == context.DeadlineExceeded {
 		log.Println("Timeout ao buscar cotação: limite de 300ms excedido")
 	}
+
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		println(err)
