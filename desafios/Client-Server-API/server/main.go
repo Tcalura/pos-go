@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -15,9 +16,8 @@ import (
 )
 
 type ExchangeRate struct {
-	gorm.Model
 	ID          int64     `json:"-" gorm:"id, primaryKey"`
-	Value       float64   `json:"bid" gorm:"value"`
+	Bid         float64   `json:"bid" gorm:"value"`
 	Create_date time.Time `json:"create_date" gorm:"verification_date"`
 }
 
@@ -102,31 +102,30 @@ func (q *ExchangeRate) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("failed to convert date: %w", err)
 	}
 
-	q.Value = bid
+	q.Bid = bid
 	q.Create_date = createDate
 
 	return nil
 }
-// problema ao salvar no banco .create retorna algum erro que nao estou conseguindo ler
+
 func saveExchangeRate(exchangeRate *ExchangeRate) error {
-	db, err := gorm.Open(sqlite.Open("./database.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
+	db, _ := gorm.Open(sqlite.Open("./database.db"), &gorm.Config{})
+
 	db.AutoMigrate(&ExchangeRate{})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
 	defer cancel()
 
-	execpt := db.WithContext(ctx).Create(&ExchangeRate{Value: exchangeRate.Value, Create_date: exchangeRate.Create_date})
-	if execpt != nil {
-    log.Println("Problema ao salvar no banco de dados")
-		log.Fatal(execpt.Error)
-	}
+	result := db.WithContext(ctx).Create(&exchangeRate)
 
-	if ctx.Err() == context.DeadlineExceeded {
-		log.Println("Timeout ao salvar cotação: limite de 10ms excedido")
-		return ctx.Err()
+	if result.Error != nil {
+		if errors.Is(result.Error, context.DeadlineExceeded) {
+			log.Println("Timeout ao salvar cotação: limite de 10ms excedido")
+		} else {
+			log.Println("Problema ao salvar no banco de dados")
+		}
+    log.Printf("Erro técnico: %v\n", result.Error)
+		return result.Error
 	}
 	return nil
 }
